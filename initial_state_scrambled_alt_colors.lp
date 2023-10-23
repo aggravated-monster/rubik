@@ -1,0 +1,59 @@
+holds(color(1,green), 0).
+holds(color(2,blue), 0).
+holds(color(3,cyan), 0).
+holds(color(4,green), 0).
+holds(color(5,red), 0).
+holds(color(6,cyan), 0).
+holds(color(7,blue), 0).
+holds(color(8,green), 0).
+holds(color(9,red), 0).
+
+holds(color(10,magenta), 0).
+holds(color(11,cyan), 0).
+holds(color(12,cyan), 0).
+holds(color(13,cyan), 0).
+holds(color(14,yellow), 0).
+holds(color(15,magenta), 0).
+holds(color(16,cyan), 0).
+holds(color(17,magenta), 0).
+holds(color(18,blue), 0).
+
+holds(color(19,yellow), 0).
+holds(color(20,magenta), 0).
+holds(color(21,yellow), 0).
+holds(color(22,cyan), 0).
+holds(color(23,magenta), 0).
+holds(color(24,yellow), 0).
+holds(color(25,green), 0).
+holds(color(26,red), 0).
+holds(color(27,yellow), 0).
+
+holds(color(28,cyan), 0).
+holds(color(29,green), 0).
+holds(color(30,magenta), 0).
+holds(color(31,blue), 0).
+holds(color(32,red), 0).
+holds(color(33,green), 0).
+holds(color(34,green), 0).
+holds(color(35,blue), 0).
+holds(color(36,magenta), 0).
+
+holds(color(37,yellow), 0).
+holds(color(38,yellow), 0).
+holds(color(39,green), 0).
+holds(color(40,yellow), 0).
+holds(color(41,blue), 0).
+holds(color(42,yellow), 0).
+holds(color(43,blue), 0).
+holds(color(44,blue), 0).
+holds(color(45,green), 0).
+
+holds(color(46,blue), 0).
+holds(color(47,red), 0).
+holds(color(48,magenta), 0).
+holds(color(49,magenta), 0).
+holds(color(50,red), 0).
+holds(color(51,red), 0).
+holds(color(52,red), 0).
+holds(color(53,red), 0).
+holds(color(54,cyan), 0).
