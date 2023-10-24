@@ -1,15 +1,29 @@
 vertex(1..54).
-orbit(outer;middle;inner).
-projection(xy;yz;xz).
-%circle(xy,outer;xy,middle;xy,inner;xz,outer;xz,middle;xz,inner;yz,outer;yz,middle;yz,inner).
-face(top;bottom;left;right;front;back).
 
+%% in the  graph representation, each group of concentric circles represent a projection
+%% on one of the planes in a 3D xyz coordination system.
+projection(xy;yz;xz).
+
+%% each circle corresponds to a 'layer' of the cube.
+%% In the 2d representation, we essentially lost the notions of top/bottom, left/right, front/back
+%% so instead we will name these Orbits.
+orbit(outer;middle;inner).
+
+%% A circle is then a projection of a 'layer' on a plane
 circle(P,O) :- projection(P), orbit(O).
 
+%% In the graph representation, there are 6 clusters, which in the 3d world represent the faces.
+%% Here, the 3d terms creep back. The naming of the clusters is arbitrary, but it turns out,
+%% to keep one's sanity, it is a really good idea to still connect to the 3d world.
+face(top;bottom;left;right;front;back).
+
 % define the topology.
-% the vertices can be numbered arbitrarily, but for readability we will group them in logical groups,
-% each representing a face, to stick with the domain semantics of a Rubik's Cube
+% the vertices can be numbered arbitrarily, but to stick with the domain semantics of a Rubik's Cube
+% and for readability we will group them in logical groups, each representing a face.
 % (we do not really care about the orientation though, but this makes it easier to talk about it and interpret results).
+% Note: the original plan was to use this in the goal rule.
+% Now it is only used in the initial state of a solved cube, which is used nowhere.
+% This relation therefore has no closure (and could be removed altogether)
 lies_on((1..9),top).
 lies_on((10..18),right).
 lies_on((25..27),bottom).
@@ -17,6 +31,7 @@ lies_on((28..36),left).
 lies_on((37..45),front).
 lies_on((46..54),back).
 
+%% outsider faces co-rotate when an outer circle is rotated, so they must be identifiable
 lies_outside(left, yz, outer).
 lies_outside(back, xz, outer).
 lies_outside(bottom, xy, outer).
@@ -25,6 +40,7 @@ lies_outside(bottom, xy, outer).
                     circle(P,O),
                     not lies_outside(F,P,O).
 
+%% insider faces co-rotate when an inner circle is rotated, so they must be identifiable
 lies_inside(top, xy, inner).
 lies_inside(right, yz, inner).
 lies_inside(front, xz, inner).
@@ -34,9 +50,8 @@ lies_inside(front, xz, inner).
                     not lies_inside(F,P,O).
 
 
-% To make life easy, we do not define a full graph structure: we only care about the circles, and the number
-% and order of each vertex on these circles. The topology below sets the structure in stone.
-% (Instead of meddling with edges, we will simply rotate the colors once we start manipulating the "cube"
+% To make life easy, we never manipulate the graph structure. The topology below sets the structure in stone.
+% Instead of meddling with edges, we will simply rotate the colors once we start manipulating the "cube".
 successor(xz,outer,1,2).
 successor(xz,outer,2,3).
 successor(xz,outer,3,16).
@@ -155,59 +170,62 @@ successor(xy,inner,40,39).
 successor(xy,inner,39,32).
 
 % swap places to define predecessors. I have a gut feeling this comes in handy when rotating
+% This is not strictly necessary, but makes the rotating rules more comprehensible
 predecessor(P,O,S,V) :- successor(P,O,V,S).
 
 % the faces also need to rotate, so they need an order as well
-face_successor(top,1,2).
-face_successor(top,2,3).
-face_successor(top,3,4).
-face_successor(top,4,5).
-face_successor(top,5,6).
-face_successor(top,6,7).
-face_successor(top,7,8).
-face_successor(top,8,1).
+successor(top,1,2).
+successor(top,2,3).
+successor(top,3,4).
+successor(top,4,5).
+successor(top,5,6).
+successor(top,6,7).
+successor(top,7,8).
+successor(top,8,1).
 
-face_successor(right,16,17).
-face_successor(right,17,10).
-face_successor(right,10,11).
-face_successor(right,11,12).
-face_successor(right,12,13).
-face_successor(right,13,14).
-face_successor(right,14,15).
-face_successor(right,15,16).
+successor(right,16,17).
+successor(right,17,10).
+successor(right,10,11).
+successor(right,11,12).
+successor(right,12,13).
+successor(right,13,14).
+successor(right,14,15).
+successor(right,15,16).
 
-face_successor(bottom,25,26).
-face_successor(bottom,26,19).
-face_successor(bottom,19,20).
-face_successor(bottom,20,21).
-face_successor(bottom,21,22).
-face_successor(bottom,22,23).
-face_successor(bottom,23,24).
-face_successor(bottom,24,25).
+successor(bottom,25,26).
+successor(bottom,26,19).
+successor(bottom,19,20).
+successor(bottom,20,21).
+successor(bottom,21,22).
+successor(bottom,22,23).
+successor(bottom,23,24).
+successor(bottom,24,25).
 
-face_successor(left,28,29).
-face_successor(left,29,30).
-face_successor(left,30,31).
-face_successor(left,31,32).
-face_successor(left,32,33).
-face_successor(left,33,34).
-face_successor(left,34,35).
-face_successor(left,35,28).
+successor(left,28,29).
+successor(left,29,30).
+successor(left,30,31).
+successor(left,31,32).
+successor(left,32,33).
+successor(left,33,34).
+successor(left,34,35).
+successor(left,35,28).
 
-face_successor(front,37,38).
-face_successor(front,38,39).
-face_successor(front,39,40).
-face_successor(front,40,41).
-face_successor(front,41,42).
-face_successor(front,42,43).
-face_successor(front,43,44).
-face_successor(front,44,37).
+successor(front,37,38).
+successor(front,38,39).
+successor(front,39,40).
+successor(front,40,41).
+successor(front,41,42).
+successor(front,42,43).
+successor(front,43,44).
+successor(front,44,37).
 
-face_successor(back,46,47).
-face_successor(back,47,48).
-face_successor(back,48,49).
-face_successor(back,49,50).
-face_successor(back,50,51).
-face_successor(back,51,52).
-face_successor(back,52,53).
-face_successor(back,53,46).
+successor(back,46,47).
+successor(back,47,48).
+successor(back,48,49).
+successor(back,49,50).
+successor(back,50,51).
+successor(back,51,52).
+successor(back,52,53).
+successor(back,53,46).
+
+predecessor(F,S,V) :- successor(F,V,S).

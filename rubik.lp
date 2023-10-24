@@ -15,18 +15,27 @@ fluent(inertial,color(V,C)) :- vertex(V), color(C).
                     color(C) != color(C1).
 
 %% CWA: if a vertex is not known to have color C at step 0
-%% then assume is has not
+%% then assume is has not.
+%% This is probably good practice in general (for querying for instance), but in the Rubik's Cube case
+%% it feels a bit superfluous, as the initial state has to be valid in order to find a solution in the first place.
+%% This means the initial state has to be complete, and then the rule above applies.
 -holds(color(V,C), 0) :- vertex(V), color(C),
                          not holds(color(V,C),0).
 
 
-% circles can be rotated. For now, assume clockwise and counter clockwise are 2 different actions.
-% If this works, perhaps generalise to one, with direction as a parameter
+% Circles can be rotated. To keep the level of black magic down,
+% assume clockwise and counter clockwise to be 2 different actions.
 action(rotate_cw(P,O)) :- circle(P,O).
 action(rotate_ccw(P,O)) :- circle(P,O).
 
-%% the result of a clockwise rotation is that each color(V,C) on circle X moves to the successor of V.
-%% or in other words: a vertex V receives the color of its predecessor
+%% Faces can also rotate. In the 2d graph representation, this works like cogs:
+%% Insider faces co-rotate with inner circles; outsider faces counter-co-rotate with outer circles
+action(co_rotate_cw(F)) :- face(F).
+action(co_rotate_ccw(F)) :- face(F).
+
+
+%% the result of a clockwise rotation is that each color(V,C) on circle (P,O) moves to the 3rd successor of V.
+%% or in other words: a vertex V receives the color of its 3rd predecessor
 holds(color(V,C),I+1) :- occurs(rotate_cw(P,O),I),
                         I < n,
                         predecessor(P,O,V,V1),
@@ -34,22 +43,23 @@ holds(color(V,C),I+1) :- occurs(rotate_cw(P,O),I),
                         predecessor(P,O,V2,V3),
                         holds(color(V3,C),I).
 
-% and a side effect is a 2-position counter-clockwise rotation of an outside face, in case an outer circle clockwise rotation
+% and a side effect is a 2-position counter-clockwise rotation of an outsider face, in case of an outer circle clockwise rotation
 holds(color(V,C),I+1) :- occurs(rotate_cw(P,O),I),
                         I < n,
                         face(F),
                         lies_outside(F,P,O),
-                        face_successor(F,V1,V),
-                        face_successor(F,V2,V1),
+                        successor(F,V,V1),
+                        successor(F,V1,V2),
                         holds(color(V2,C),I).
 
-% or a 2-position clockwise rotation of an inside face, in case an inner circle clockwise rotation
+% or a 2-position clockwise rotation of an inside face, in case an inner circle clockwise rotation,
+% meaning V receives the color of its 2nd predecessor
 holds(color(V,C),I+1) :- occurs(rotate_cw(P,O),I),
                         I < n,
                         face(F),
                         lies_inside(F,P,O),
-                        face_successor(F,V,V1),
-                        face_successor(F,V1,V2),
+                        predecessor(F,V,V1),
+                        predecessor(F,V1,V2),
                         holds(color(V2,C),I).
 
 
@@ -67,17 +77,17 @@ holds(color(V,C),I+1) :- occurs(rotate_ccw(P,O),I),
                         I < n,
                         face(F),
                         lies_outside(F,P,O),
-                        face_successor(F,V,V1),
-                        face_successor(F,V1,V2),
+                        predecessor(F,V,V1),
+                        predecessor(F,V1,V2),
                         holds(color(V2,C),I).
 
-% or a 2-position clockwise rotation of an inside face, in case an inner circle clockwise rotation
+% or a 2-position counter-clockwise rotation of an inside face, in case an inner circle counter-clockwise rotation
 holds(color(V,C),I+1) :- occurs(rotate_ccw(P,O),I),
                         I < n,
                         face(F),
                         lies_inside(F,P,O),
-                        face_successor(F,V1,V),
-                        face_successor(F,V2,V1),
+                        successor(F,V,V1),
+                        successor(F,V1,V2),
                         holds(color(V2,C),I).
 
 %% in case we want to explicitly prevent rotation of the middle orbits. This is closer to the real-world solution
@@ -129,14 +139,14 @@ holds(number_of_solved_circles(N),I) :- step(I),
 goal(I) :- circle(P,O),
             holds(number_of_solved_circles(9),I).
 
-%#const n = 5.
-%#include "initial_state_solved.lp".
+#const n = 5.
+#include "initial_state_solved.lp".
 % rotate
 %occurs(rotate_ccw(xy,inner),0).
 %occurs(rotate_ccw(yz,middle),1).
 
-%occurs(rotate_cw(xy,inner),0).
-%occurs(rotate_cw(yz,outer),1).
-%occurs(rotate_ccw(xz,outer),2).
-%occurs(rotate_ccw(yz,inner),3).
-%occurs(rotate_cw(xz,inner),4).
+occurs(rotate_cw(xy,inner),0).
+occurs(rotate_cw(yz,outer),1).
+occurs(rotate_ccw(xz,outer),2).
+occurs(rotate_ccw(yz,inner),3).
+occurs(rotate_cw(xz,inner),4).
