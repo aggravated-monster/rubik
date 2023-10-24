@@ -8,24 +8,24 @@ holds(color(7,red), 0).
 holds(color(8,white), 0).
 holds(color(9,white), 0).
 
-holds(color(10,yellow), 0).
+holds(color(16,yellow), 0).
+holds(color(17,green), 0).
+holds(color(10,green), 0).
 holds(color(11,green), 0).
 holds(color(12,green), 0).
 holds(color(13,green), 0).
-holds(color(14,green), 0).
-holds(color(15,green), 0).
-holds(color(16,yellow), 0).
-holds(color(17,red), 0).
+holds(color(14,yellow), 0).
+holds(color(15,red), 0).
 holds(color(18,green), 0).
 
-holds(color(19,orange), 0).
-holds(color(20,yellow), 0).
-holds(color(21,orange), 0).
-holds(color(22,orange), 0).
-holds(color(23,orange), 0).
-holds(color(24,yellow), 0).
 holds(color(25,orange), 0).
-holds(color(26,orange), 0).
+holds(color(26,yellow), 0).
+holds(color(19,orange), 0).
+holds(color(20,orange), 0).
+holds(color(21,orange), 0).
+holds(color(22,yellow), 0).
+holds(color(23,orange), 0).
+holds(color(24,orange), 0).
 holds(color(27,yellow), 0).
 
 holds(color(28,blue), 0).

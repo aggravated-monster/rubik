@@ -1,6 +1,7 @@
 #include "topology.lp".
 
 color(red;orange;yellow;white;blue;green).
+% alternative color scheme for initial states based on the video
 %color(red;yellow;blue;cyan;magenta;green).
 
 step(0..n).
