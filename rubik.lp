@@ -139,14 +139,14 @@ holds(number_of_solved_circles(N),I) :- step(I),
 goal(I) :- circle(P,O),
             holds(number_of_solved_circles(9),I).
 
-#const n = 5.
-#include "initial_state_solved.lp".
+%#const n = 5.
+%#include "initial_state_solved.lp".
 % rotate
 %occurs(rotate_ccw(xy,inner),0).
 %occurs(rotate_ccw(yz,middle),1).
 
-occurs(rotate_cw(xy,inner),0).
-occurs(rotate_cw(yz,outer),1).
-occurs(rotate_ccw(xz,outer),2).
-occurs(rotate_ccw(yz,inner),3).
-occurs(rotate_cw(xz,inner),4).
+%occurs(rotate_cw(xy,inner),0).
+%occurs(rotate_cw(yz,outer),1).
+%occurs(rotate_ccw(xz,outer),2).
+%occurs(rotate_ccw(yz,inner),3).
+%occurs(rotate_cw(xz,inner),4).
