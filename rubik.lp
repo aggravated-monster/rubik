@@ -105,8 +105,11 @@ holds(F,I+1) :- holds(F,I),
                 not occurs(A,I).
 
 %% Goal
+%% --------------------------------------------------------------------------
 % the goal has been reached when all faces are unicolored
-% One way to detect this is to count the number of vertices on each circle that have 2 successors with the same color.
+% The obvious way to detect this is to evaluate the colors of the vertices on each face, but
+% another way to detect this is to count the number of vertices on each circle that have 2 successors with the same color,
+% which I find a fascinating property.
 % This number shall be 4. This translates to each circle having 4 triplets of # unicolored vertices.
 % Count the number of vertices with 2 successors having the same color
 fluent(defined,number_of_triplets(P,O,N)) :- circle(P,O), N = 0..4.
@@ -122,6 +125,7 @@ holds(number_of_triplets(P,O,N),I) :- circle(P,O), step(I),
                                             holds(color(V2,C),I),
                                             holds(color(V3,C),I)}.
 
+%% and to reach the goal, this shall then be true for each circle
 holds(number_of_solved_circles(N),I) :- step(I),
                                          N = #count{P,O : circle(P,O),
                                          holds(number_of_triplets(P,O,4),I)}.
