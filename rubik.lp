@@ -81,6 +81,14 @@ holds(color(V,C),I+1) :- side_effect(co_rotate_ccw(F),I),
                         successor(F,V1,V2),
                         holds(color(V2,C),I).
 
+%% block nonsensical sequences cancelling each other out.
+%% This can theoretically go many steps deep, but we do the obvious 2-sequences only here
+%% note: this seems to have a slightly negative impact on resolution time (only for 5 steps;
+%% as we cannot go higher than that anyway, let it slide.
+-occurs(rotate_ccw(P,O),I+1) :- occurs(rotate_cw(P,O),I),
+                                I < n.
+-occurs(rotate_cw(P,O),I+1) :- occurs(rotate_ccw(P,O),I),
+                                I < n.
 
 %% BOILER PLATE
 %% ------------------------------------------------------------------------
