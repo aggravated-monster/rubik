@@ -28,12 +28,27 @@ fluent(inertial,color(V,C)) :- vertex(V), color(C).
 action(rotate_cw(P,O)) :- circle(P,O).
 action(rotate_ccw(P,O)) :- circle(P,O).
 
-%% Faces can also rotate. In the 2d graph representation, this works like cogs:
-%% Insider faces co-rotate with inner circles; outsider faces counter-co-rotate with outer circles
-action(co_rotate_cw(F)) :- face(F).
-action(co_rotate_ccw(F)) :- face(F).
+% A rotation of an outer circle causes a co-rotation in the opposite direction
+side_effect(co_rotate_ccw(F),I) :- occurs(rotate_cw(P,outer),I),
+                              face(F),
+                              lies_outside(F,P,outer).
+
+side_effect(co_rotate_cw(F),I) :- occurs(rotate_ccw(P,outer),I),
+                              face(F),
+                              lies_outside(F,P,outer).
+
+% A rotation of an inner circle causes a co-rotation in the same direction
+side_effect(co_rotate_cw(F),I) :- occurs(rotate_cw(P,inner),I),
+                              face(F),
+                              lies_inside(F,P,inner).
+
+side_effect(co_rotate_ccw(F),I) :- occurs(rotate_ccw(P,inner),I),
+                              face(F),
+                              lies_inside(F,P,inner).
 
 
+%% Chain of events
+%% -----------------------------------------------------------------------
 %% the result of a clockwise rotation is that each color(V,C) on circle (P,O) moves to the 3rd successor of V.
 %% or in other words: a vertex V receives the color of its 3rd predecessor
 holds(color(V,C),I+1) :- occurs(rotate_cw(P,O),I),
@@ -42,25 +57,6 @@ holds(color(V,C),I+1) :- occurs(rotate_cw(P,O),I),
                         predecessor(P,O,V1,V2),
                         predecessor(P,O,V2,V3),
                         holds(color(V3,C),I).
-
-% and a side effect is a 2-position counter-clockwise rotation of an outsider face, in case of an outer circle clockwise rotation
-holds(color(V,C),I+1) :- occurs(rotate_cw(P,O),I),
-                        I < n,
-                        face(F),
-                        lies_outside(F,P,O),
-                        successor(F,V,V1),
-                        successor(F,V1,V2),
-                        holds(color(V2,C),I).
-
-% or a 2-position clockwise rotation of an inside face, in case an inner circle clockwise rotation,
-% meaning V receives the color of its 2nd predecessor
-holds(color(V,C),I+1) :- occurs(rotate_cw(P,O),I),
-                        I < n,
-                        face(F),
-                        lies_inside(F,P,O),
-                        predecessor(F,V,V1),
-                        predecessor(F,V1,V2),
-                        holds(color(V2,C),I).
 
 
 %% the result of a counter-clockwise rotation is that each color(V,C) on circle(P,O) moves to the 3rd predecessor of V.
@@ -72,28 +68,22 @@ holds(color(V,C),I+1) :- occurs(rotate_ccw(P,O),I),
                         successor(P,O,V2,V3),
                         holds(color(V3,C),I).
 
-% and a side effect is a 2-position clockwise rotation of an outside face, in case an outer circle counter-clockwise rotation
-holds(color(V,C),I+1) :- occurs(rotate_ccw(P,O),I),
-                        I < n,
-                        face(F),
-                        lies_outside(F,P,O),
+% Similarly, co-rotation of the faces moves the colors 2 positions
+holds(color(V,C),I+1) :- side_effect(co_rotate_cw(F),I),
+                         I < n,
                         predecessor(F,V,V1),
                         predecessor(F,V1,V2),
                         holds(color(V2,C),I).
 
-% or a 2-position counter-clockwise rotation of an inside face, in case an inner circle counter-clockwise rotation
-holds(color(V,C),I+1) :- occurs(rotate_ccw(P,O),I),
-                        I < n,
-                        face(F),
-                        lies_inside(F,P,O),
+holds(color(V,C),I+1) :- side_effect(co_rotate_ccw(F),I),
+                         I < n,
                         successor(F,V,V1),
                         successor(F,V1,V2),
                         holds(color(V2,C),I).
 
-%% in case we want to explicitly prevent rotation of the middle orbits. This is closer to the real-world solution
-%% algorithms, where a middle orbit rotation is actually comprised of a outer and inner rotation, sequentially.
-%-occurs(rotate_cw(P,O),I) :- circle(P,middle).
 
+%% BOILER PLATE
+%% ------------------------------------------------------------------------
 %% CWA for Defined Fluents
 -holds(F,I) :- fluent(defined,F),
                 step(I),
@@ -139,14 +129,8 @@ holds(number_of_solved_circles(N),I) :- step(I),
 goal(I) :- circle(P,O),
             holds(number_of_solved_circles(9),I).
 
-%#const n = 5.
+%#const n = 2.
 %#include "initial_state_solved.lp".
-% rotate
-%occurs(rotate_ccw(xy,inner),0).
-%occurs(rotate_ccw(yz,middle),1).
-
-%occurs(rotate_cw(xy,inner),0).
-%occurs(rotate_cw(yz,outer),1).
-%occurs(rotate_ccw(xz,outer),2).
-%occurs(rotate_ccw(yz,inner),3).
-%occurs(rotate_cw(xz,inner),4).
+% rotate forward
+%occurs(rotate_ccw(xz,outer),0).
+%occurs(rotate_cw(xy,outer),1).

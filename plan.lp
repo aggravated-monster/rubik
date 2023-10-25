@@ -23,13 +23,13 @@ success :- goal(I),
 
 %% note: solving for 5 moves can take up to 5 minutes on a single thread
 %% Using multithreading (command line -t option) speeds things up, but can still take around 90 seconds
-%#include "initial_state_5_moves.lp".
+#include "initial_state_5_moves.lp".
 %% note: solving for 4 moves takes about 15 seconds
-#include "initial_state_4_moves.lp".
+%#include "initial_state_4_moves.lp".
 %#include "initial_state_3_moves.lp".
 %#include "initial_state_2_moves.lp".
 %#include "initial_state_1_move.lp".
 % do not exceed 5
-#const n = 4.
+#const n = 5.
 
 #show occurs/2.
