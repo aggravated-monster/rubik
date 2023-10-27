@@ -33,3 +33,4 @@ success :- goal(I),
 #const n = 5.
 
 #show occurs/2.
+%#show holds/2.

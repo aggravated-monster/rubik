@@ -125,6 +125,10 @@ fluent(defined,number_of_triplets(P,O,N)) :- circle(P,O), N = 0..4.
 % keep the total as a fluent for debugging purposes
 fluent(defined,number_of_solved_circles(N)) :- N = 0..9.
 
+fluent(defined,number_of_solved_faces(N)) :- N = (0;1;6).
+
+fluent(defined,same_color_on_face(F,N)) :- N = (0..9), face(F).
+
 holds(number_of_triplets(P,O,N),I) :- circle(P,O), step(I),
                                         N = #count{V1,V2,V3 : vertex(V1), vertex(V2), vertex(V3),
                                             successor(P,O,V1,V2),
@@ -138,8 +142,13 @@ holds(number_of_solved_circles(N),I) :- step(I),
                                          N = #count{P,O : circle(P,O),
                                          holds(number_of_triplets(P,O,4),I)}.
 
-goal(I) :- circle(P,O),
-            holds(number_of_solved_circles(9),I).
+holds(color_on_face(F,N),I) :- N = #count{C : holds(color(V,C),I), lies_on(V,F)}, face(F), step(I).
+
+holds(number_of_solved_faces(N),I) :- N = #count{F : holds(color_on_face(F,1),I) }, step(I).
+
+%goal(I) :- holds(number_of_solved_circles(9),I).
+
+goal(I) :- holds(number_of_solved_faces(6),I).
 
 %#const n = 2.
 %#include "initial_state_solved.lp".
