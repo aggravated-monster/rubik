@@ -65,6 +65,7 @@ clockwise(top;left_side;back).
 
 fluent(inertial, color_vertex(V,C)) :- color(C), vertex(V).
 fluent(defined, completed(S)) :- surface(S).
+fluent(defined,colors_on_surface(S,N)) :- N = (0..9), surface(S).
 
 action(turn(C,D)) :- circle(C), direction(D).
 
@@ -76,26 +77,26 @@ step(0..n).
 % causal laws
 holds(completed(S),I) :- surface(S), center(S,Ce), holds(color_vertex(Ce,C),I), N = #count{V: contains(S,V), holds(color_vertex(V,C1),I), C1 != C}, N = 0.
 
+holds(colors_on_surface(S,N),I) :- N = #count{C : holds(color_vertex(V,C),I), contains(S,V)}, surface(S), step(I).
+
 holds(color_vertex(V,C2), I+1) :- occurs(turn(C,D),I), opposite(D,Op), step(I),
                                   is_part_of(C,V), is_part_of(C,X), is_part_of(C,Y), is_part_of(C,Z),
                                   edge(V,X,Op), edge(X,Y,Op), edge(Y,Z,Op), holds(color_vertex(Z,C2),I),
                                   I < n.
 
-occurs(rotate_right(S),I):- occurs(turn(C,right),I),outer_circle(C), adjacent_surface(C,S), clockwise(S).
-occurs(rotate_left(S),I):- occurs(turn(C,left),I),outer_circle(C), adjacent_surface(C,S), clockwise(S).
-occurs(rotate_left(S),I):- occurs(turn(C,right),I),outer_circle(C), adjacent_surface(C,S), counter_clock(S).
-occurs(rotate_right(S),I):- occurs(turn(C,left),I),outer_circle(C), adjacent_surface(C,S), counter_clock(S).
+happens(rotate_right(S),I):- occurs(turn(C,right),I),outer_circle(C), adjacent_surface(C,S), clockwise(S).
+happens(rotate_left(S),I):- occurs(turn(C,left),I),outer_circle(C), adjacent_surface(C,S), clockwise(S).
+happens(rotate_left(S),I):- occurs(turn(C,right),I),outer_circle(C), adjacent_surface(C,S), counter_clock(S).
+happens(rotate_right(S),I):- occurs(turn(C,left),I),outer_circle(C), adjacent_surface(C,S), counter_clock(S).
 
-holds(color_vertex(V,C), I+1) :-  occurs(rotate_right(S),I), contains(S,V), contains(S,X), contains(S,Y), edge2(V,X,right), edge2(X,Y,right), holds(color_vertex(Y,C),I), I < n.
+holds(color_vertex(V,C), I+1) :-  happens(rotate_right(S),I), contains(S,V), contains(S,X), contains(S,Y), edge2(V,X,right), edge2(X,Y,right), holds(color_vertex(Y,C),I), I < n.
 
-holds(color_vertex(V,C), I+1) :-  occurs(rotate_left(S),I), contains(S,V), contains(S,X), contains(S,Y),edge2(V,X,left), edge2(X,Y,left), holds(color_vertex(Y,C),I), I < n.
+holds(color_vertex(V,C), I+1) :-  happens(rotate_left(S),I), contains(S,V), contains(S,X), contains(S,Y),edge2(V,X,left), edge2(X,Y,left), holds(color_vertex(Y,C),I), I < n.
 
 %% block nonsensical sequences cancelling each other out.
-%% This can theoretically go many steps deep, but we do the obvious 2-sequences only here
--occurs(turn(C,left),I+1) :- occurs(turn(C,right),I),
-                                I < n.
--occurs(turn(C,right),I+1) :- occurs(turn(C,left),I),
-                                I < n.
+%% This can theoretically go many steps deep, but we do the obvious 2-sequences only
+-occurs(turn(C,right),I+1) :- occurs(turn(C,left),I).
+-occurs(turn(C,left),I+1) :- occurs(turn(C,right),I).
 
 % state constraint
 -holds(color_vertex(V,C2), I) :- color(C2), holds(color_vertex(V,C1),I), color(C1), C1 != C2.
@@ -182,6 +183,14 @@ success :- goal(I), I<=n.
 
 %goal state:
 goal(I):- holds(completed(front),I), holds(completed(top),I), holds(completed(back),I), holds(completed(bottom),I), holds(completed(left_side),I), holds(completed(right_side),I).
+
+%goal(I):- holds(colors_on_face(top,1),I),
+%            holds(colors_on_face(bottom,1),I),
+%            holds(colors_on_face(left_side,1),I),
+%            holds(colors_on_face(right_side,1),I),
+%            holds(colors_on_face(front,1),I),
+%            holds(colors_on_face(back,1),I).
+
 
 #show occurs/2.
 
