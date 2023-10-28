@@ -23,16 +23,16 @@ success :- goal(I),
 
 %% note: solving for 5 moves can take up to 5 minutes on a single thread
 %% Using multithreading (command line -t option) speeds things up, but can still take around 90 seconds
-% clingo -n 1 plan.lp will take up to 5 minutes to find a 7 step solution
+% clingo -n 1 plan.lp can take up to 5 minutes to find a 7 step solution
 %#include "initial_state_7_moves.lp".
-% clingo -n 1 plan.lp will take up to 25 seconds to find a 6 step solution
-%#include "initial_state_6_moves.lp".
+% clingo -n 1 plan.lp can take up to 75 seconds to find a 6 step solution
+#include "initial_state_6_moves.lp".
 %#include "initial_state_5_moves.lp".
-#include "initial_state_4_moves.lp".
+%#include "initial_state_4_moves.lp".
 %#include "initial_state_3_moves.lp".
 %#include "initial_state_2_moves.lp".
 %#include "initial_state_1_move.lp".
-#const n = 4.
+#const n = 6.
 
 #show occurs/2.
 %#show holds/2.
