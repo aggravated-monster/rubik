@@ -38,6 +38,7 @@ side_effect(co_rotate_ccw(F),I) :- occurs(rotate_ccw(P,inner),I),
                               lies_inside(F,P,inner).
 
 
+
 %% Chain of events
 %% -----------------------------------------------------------------------
 %% the result of a clockwise rotation is that each color(V,C) on circle (P,O) moves to the 3rd successor of V.
@@ -106,20 +107,20 @@ holds(F,I+1) :- holds(F,I),
 % which I find a fascinating property.
 % This number shall be 4. This translates to each circle having 4 triplets of # unicolored vertices.
 % Count the number of vertices with 2 successors having the same color
-fluent(defined,colors_on_face(F,N)) :- N = (1..9), face(F).
-%fluent(defined,completed(F)) :- face(F).
+%fluent(defined,colors_on_face(F,N)) :- N = (1..9), face(F).
+fluent(defined,completed(F)) :- face(F).
 
 
 
-holds(colors_on_face(F,N),I) :- N = #count{C : holds(color(V,C),I), lies_on(V,F)}, face(F), step(I).
-%holds(completed(F),I) :- N = #count{C : holds(color(V,C),I), lies_on(V,F)}, face(F), step(I), N = 1.
+%holds(colors_on_face(F,N),I) :- N = #count{C : holds(color(V,C),I), lies_on(V,F)}, face(F), step(I).
+holds(completed(F),I) :- N = #count{C : holds(color(V,C),I), lies_on(V,F)}, face(F), step(I), N = 1.
 
-goal(I):- holds(colors_on_face(top,1),I),
-            holds(colors_on_face(bottom,1),I),
-            holds(colors_on_face(left,1),I),
-            holds(colors_on_face(right,1),I),
-            holds(colors_on_face(front,1),I),
-            holds(colors_on_face(back,1),I).
+%goal(I):- holds(colors_on_face(top,1),I),
+%            holds(colors_on_face(bottom,1),I),
+%            holds(colors_on_face(left,1),I),
+%            holds(colors_on_face(right,1),I),
+%            holds(colors_on_face(front,1),I),
+%            holds(colors_on_face(back,1),I).
 
 %goal(I):- holds(completed(top),I),
 %            holds(completed(bottom),I),
@@ -128,6 +129,7 @@ goal(I):- holds(colors_on_face(top,1),I),
 %            holds(completed(front),I),
 %            holds(completed(back),I).
 
+goal(I):- 6 = #count{F : holds(completed(F),I)}, step(I).
 
 %#const n = 2.
 %#include "initial_state_solved.lp".
