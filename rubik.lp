@@ -73,10 +73,8 @@ holds(color(V,C),I+1) :- side_effect(co_rotate_ccw(F),I),
 
 %% block nonsensical sequences cancelling each other out.
 %% This can theoretically go many steps deep, but we do the obvious 2-sequences only here
--occurs(rotate_ccw(P,O),I+1) :- occurs(rotate_cw(P,O),I),
-                                I < n.
--occurs(rotate_cw(P,O),I+1) :- occurs(rotate_ccw(P,O),I),
-                                I < n.
+-occurs(rotate_ccw(P,O),I+1) :- occurs(rotate_cw(P,O),I).
+-occurs(rotate_cw(P,O),I+1) :- occurs(rotate_ccw(P,O),I).
 
 %% BOILER PLATE
 %% ------------------------------------------------------------------------
@@ -108,30 +106,28 @@ holds(F,I+1) :- holds(F,I),
 % which I find a fascinating property.
 % This number shall be 4. This translates to each circle having 4 triplets of # unicolored vertices.
 % Count the number of vertices with 2 successors having the same color
-fluent(defined,number_of_triplets(P,O,N)) :- circle(P,O), N = 0..4.
-fluent(defined,number_of_solved_circles(N)) :- N = 0..9.
-fluent(defined,number_of_solved_faces(N)) :- N = (0;1;2;6).
-fluent(defined,colors_on_face(F,N)) :- N = (0..9), face(F).
+fluent(defined,colors_on_face(F,N)) :- N = (1..9), face(F).
+%fluent(defined,completed(F)) :- face(F).
 
-holds(number_of_triplets(P,O,N),I) :- circle(P,O), step(I),
-                                        N = #count{V1,V2,V3 : vertex(V1), vertex(V2), vertex(V3),
-                                            successor(P,O,V1,V2),
-                                            successor(P,O,V2,V3),
-                                            holds(color(V1,C),I),
-                                            holds(color(V2,C),I),
-                                            holds(color(V3,C),I)}.
 
-%% and to reach the goal, this shall then be true for each circle
-holds(number_of_solved_circles(N),I) :- step(I),
-                                         N = #count{P,O : circle(P,O),
-                                         holds(number_of_triplets(P,O,4),I)}.
 
 holds(colors_on_face(F,N),I) :- N = #count{C : holds(color(V,C),I), lies_on(V,F)}, face(F), step(I).
-holds(number_of_solved_faces(N),I) :- N = #count{F : holds(colors_on_face(F,1),I) }, step(I).
+%holds(completed(F),I) :- N = #count{C : holds(color(V,C),I), lies_on(V,F)}, face(F), step(I), N = 1.
 
-%goal(I) :- holds(number_of_solved_circles(9),I).
+goal(I):- holds(colors_on_face(top,1),I),
+            holds(colors_on_face(bottom,1),I),
+            holds(colors_on_face(left,1),I),
+            holds(colors_on_face(right,1),I),
+            holds(colors_on_face(front,1),I),
+            holds(colors_on_face(back,1),I).
 
-goal(I) :- holds(number_of_solved_faces(6),I).
+%goal(I):- holds(completed(top),I),
+%            holds(completed(bottom),I),
+%            holds(completed(left),I),
+%            holds(completed(right),I),
+%            holds(completed(front),I),
+%            holds(completed(back),I).
+
 
 %#const n = 2.
 %#include "initial_state_solved.lp".

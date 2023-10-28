@@ -35,5 +35,5 @@ success :- goal(I),
 #include "initial_state_maxim_6_moves.lp".
 #const n = 6.
 
-%#show occurs/2.
-#show holds/2.
+#show occurs/2.
+%#show holds/2.
