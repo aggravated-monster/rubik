@@ -113,23 +113,23 @@ fluent(defined,completed(F)) :- face(F).
 
 
 %holds(colors_on_face(F,N),I) :- N = #count{C : holds(color(V,C),I), lies_on(V,F)}, face(F), step(I).
-holds(completed(F),I) :- N = #count{C : holds(color(V,C),I), lies_on(V,F)}, face(F), step(I), N = 1.
+holds(completed(F),I) :- 1 = #count{C : holds(color(V,C),I), lies_on(V,F)}, face(F), step(I).
 
-%goal(I):- holds(colors_on_face(top,1),I),
+%goal(I) :- holds(colors_on_face(top,1),I),
 %            holds(colors_on_face(bottom,1),I),
 %            holds(colors_on_face(left,1),I),
 %            holds(colors_on_face(right,1),I),
 %            holds(colors_on_face(front,1),I),
 %            holds(colors_on_face(back,1),I).
 
-%goal(I):- holds(completed(top),I),
-%            holds(completed(bottom),I),
-%            holds(completed(left),I),
-%            holds(completed(right),I),
-%            holds(completed(front),I),
-%            holds(completed(back),I).
+goal(I) :- holds(completed(top),I),
+            holds(completed(bottom),I),
+            holds(completed(left),I),
+            holds(completed(right),I),
+            holds(completed(front),I),
+            holds(completed(back),I).
 
-goal(I):- 6 = #count{F : holds(completed(F),I)}, step(I).
+%goal(I):- 6 = #count{F : holds(completed(F),I)}, step(I).
 
 %#const n = 2.
 %#include "initial_state_solved.lp".
