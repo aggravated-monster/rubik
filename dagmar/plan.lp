@@ -29,11 +29,11 @@ success :- goal(I),
 %#include "initial_state_6_moves.lp".
 %#include "initial_state_5_moves.lp".
 %#include "initial_state_4_moves.lp".
-%#include "initial_state_3_moves.lp".
+#include "initial_state_3_moves.lp".
 %#include "initial_state_2_moves.lp".
 %#include "initial_state_1_move.lp".
-#include "initial_state_maxim_6_moves.lp".
-#const n = 6.
+%#include "initial_state_maxim_6_moves.lp".
+#const n = 3.
 
 #show occurs/2.
 %#show holds/2.

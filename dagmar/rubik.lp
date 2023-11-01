@@ -107,20 +107,35 @@ holds(F,I+1) :- holds(F,I),
 % which I find a fascinating property.
 % This number shall be 4. This translates to each circle having 4 triplets of # unicolored vertices.
 % Count the number of vertices with 2 successors having the same color
-%fluent(defined,colors_on_face(F,N)) :- N = (1..9), face(F).
+%fluent(defined,number_of_triplets(P,O,N)) :- circle(P,O), N = 0..4.
+
+% keep the total as a fluent for debugging purposes
+%fluent(defined,number_of_solved_circles(N)) :- N = 0..9.
+
+%holds(number_of_triplets(P,O,N),I) :- circle(P,O), step(I),
+%                                        N = #count{V1,V2,V3 : vertex(V1), vertex(V2), vertex(V3),
+%                                            successor(P,O,V1,V2),
+%                                            successor(P,O,V2,V3),
+%                                            holds(color(V1,C),I),
+%                                            holds(color(V2,C),I),
+%                                            holds(color(V3,C),I)}.
+
+%% and to reach the goal, this shall then be true for each circle
+%holds(number_of_solved_circles(N),I) :- step(I),
+%                                         N = #count{P,O : circle(P,O),
+%                                         holds(number_of_triplets(P,O,4),I)}.
+
+%goal(I) :- circle(P,O),
+%            holds(number_of_solved_circles(9),I).
+
+
+%% Adapted Goal
+%% --------------------------------------------------------------------------
+% the goal is also reached when all faces are unicolored
+% Count the number of colors on a face. When this is 1, the face is completed
 fluent(defined,completed(F)) :- face(F).
 
-
-
-%holds(colors_on_face(F,N),I) :- N = #count{C : holds(color(V,C),I), lies_on(V,F)}, face(F), step(I).
 holds(completed(F),I) :- 1 = #count{C : holds(color(V,C),I), lies_on(V,F)}, face(F), step(I).
-
-%goal(I) :- holds(colors_on_face(top,1),I),
-%            holds(colors_on_face(bottom,1),I),
-%            holds(colors_on_face(left,1),I),
-%            holds(colors_on_face(right,1),I),
-%            holds(colors_on_face(front,1),I),
-%            holds(colors_on_face(back,1),I).
 
 goal(I) :- holds(completed(top),I),
             holds(completed(bottom),I),
@@ -129,10 +144,3 @@ goal(I) :- holds(completed(top),I),
             holds(completed(front),I),
             holds(completed(back),I).
 
-%goal(I):- 6 = #count{F : holds(completed(F),I)}, step(I).
-
-%#const n = 2.
-%#include "initial_state_solved.lp".
-% rotate forward
-%occurs(rotate_ccw(xz,outer),0).
-%occurs(rotate_cw(xy,outer),1).
