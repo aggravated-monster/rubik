@@ -26,7 +26,7 @@ face(top;bottom;left;right;front;back).
 % This relation therefore has no closure (and could be removed altogether)
 lies_on((1..9),top).
 lies_on((10..18),right).
-lies_on((25..27),bottom).
+lies_on((19..27),bottom).
 lies_on((28..36),left).
 lies_on((37..45),front).
 lies_on((46..54),back).
