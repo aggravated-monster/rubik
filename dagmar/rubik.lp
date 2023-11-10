@@ -106,41 +106,58 @@ holds(F,I+1) :- holds(F,I),
 % another way to detect this is to count the number of vertices on each circle that have 2 successors with the same color,
 % which I find a fascinating property.
 % This number shall be 4. This translates to each circle having 4 triplets of # unicolored vertices.
-% Count the number of vertices with 2 successors having the same color
-%fluent(defined,number_of_triplets(P,O,N)) :- circle(P,O), N = 0..4.
 
-% keep the total as a fluent for debugging purposes
-%fluent(defined,number_of_solved_circles(N)) :- N = 0..9.
+% Keep track of the solved circles
+fluent(defined,solved_circle(P,O)) :- circle(P,O).
+%
+% Count the number of vertices with 2 successors on the same face having the same color
+holds(solved_circle(P,O),I) :- step(I), circle(P,O),
+                                        4 = #count{V1,V2,V3 : vertex(V1), vertex(V2), vertex(V3),
+                                            successor(P,O,V1,V2),
+                                            successor(P,O,V2,V3),
+                                            lies_on(V1,F),
+                                            lies_on(V2,F),
+                                            lies_on(V3,F),
+                                            holds(color(V1,C),I),
+                                            holds(color(V2,C),I),
+                                            holds(color(V3,C),I)}.
 
-%holds(number_of_triplets(P,O,N),I) :- circle(P,O), step(I),
-%                                        N = #count{V1,V2,V3 : vertex(V1), vertex(V2), vertex(V3),
-%                                            successor(P,O,V1,V2),
-%                                            successor(P,O,V2,V3),
-%                                            holds(color(V1,C),I),
-%                                            holds(color(V2,C),I),
-%                                            holds(color(V3,C),I)}.
+%% and to reach the goal, each circle shall be solved
+goal(I) :- step(I),
+           9 = #count{P,O : holds(solved_circle(P,O),I)}.
 
-%% and to reach the goal, this shall then be true for each circle
-%holds(number_of_solved_circles(N),I) :- step(I),
-%                                         N = #count{P,O : circle(P,O),
-%                                         holds(number_of_triplets(P,O,4),I)}.
+% alternative enumerated goal. This reduces grounding and halves the time for 7 moves
+% It is however slower on the 6-move
+% But then again... this is an exponential problem. Things will be bad anyway beyond 7 moves,
+% so all of this is merely 'gerommel in de marge'
 
-%goal(I) :- circle(P,O),
-%            holds(number_of_solved_circles(9),I).
+%goal(I) :- step(I),
+%           holds(solved_circle(xy,outer),I),
+%           holds(solved_circle(xy,middle),I),
+%           holds(solved_circle(xy,inner),I),
+%           holds(solved_circle(xz,outer),I),
+%           holds(solved_circle(xz,middle),I),
+%           holds(solved_circle(xz,inner),I),
+%           holds(solved_circle(yz,outer),I),
+%           holds(solved_circle(yz,middle),I),
+%           holds(solved_circle(yz,inner),I).
 
 
-%% Adapted Goal
+
+%% Standard Goal
 %% --------------------------------------------------------------------------
 % the goal is also reached when all faces are unicolored
 % Count the number of colors on a face. When this is 1, the face is completed
-fluent(defined,completed(F)) :- face(F).
+%fluent(defined,completed(F)) :- face(F).
 
-holds(completed(F),I) :- 1 = #count{C : holds(color(V,C),I), lies_on(V,F)}, face(F), step(I).
+%holds(completed(F),I) :- 1 = #count{C : holds(color(V,C),I), lies_on(V,F)}, face(F), step(I).
 
-goal(I) :- holds(completed(top),I),
-            holds(completed(bottom),I),
-            holds(completed(left),I),
-            holds(completed(right),I),
-            holds(completed(front),I),
-            holds(completed(back),I).
+%goal(I) :- holds(completed(top),I),
+%            holds(completed(bottom),I),
+%            holds(completed(left),I),
+%            holds(completed(right),I),
+%            holds(completed(front),I),
+%            holds(completed(back),I).
+
+%goal(I) :- 6 = #count{F : holds(completed(F),I)}, step(I).
 
