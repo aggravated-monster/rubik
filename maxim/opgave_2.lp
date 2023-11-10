@@ -122,7 +122,7 @@ holds(F, I + 1) :- fluent(inertial, F), holds(F,I), not -holds(F, I+1), I<n.
 %use config files
 
 %executability condition
--occurs(turn(C,Op),I) :- occurs(turn(C, D),I), opposite(D,Op).
+-occurs(turn(C,Op),I+1) :- occurs(turn(C, D),I), opposite(D,Op).
 
 %simple planning module:
 success :- goal(I), I<=n.
